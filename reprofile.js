@@ -1,17 +1,31 @@
 /*
 *	JS Profiling System
 *
+*	use a Profile global to define options BEFORE import this file, as a JS object
+*	Es:
+*	<script type="text/javascript">Profile  = {"url" : "/logpage"}</script>
+*	<script type="text/javascript" src="/js-files/reprofile.js"></script>
+*
 */
 
 Profiling = window.Profiling || {};
 
 
+//Frameworks check
+Profiling.fw = {
+	"MooTools" : !!window.MooTools,
+	"jQuery" : !!window.jQuery
+};
+
+Profiling.jsonify = function () {};
+if (window.JSON && window.JSON.stringify) {Profiling.jsonify = window.JSON.stringify;}
+if (!Profiling.jsonify && Profiling.fw.MooTools) {Profiling.jsonify = JSON.encode;}
+
 //merge with default settings
 Profiling.default_setting = {
-	"prepend" : "",
-	"postend" : "",
 	"url" : "",
 	"method" : "POST",
+	"interval" : 1000, //milliseconds
 	"callback" : function () {}, //args: array with time steps, arguments of log
 	"serverCallback" : function () {} //args: 
 };
@@ -48,12 +62,26 @@ Profiling.ajax.onreadystatechange = function () {
 	} 
 };
 
+Profiling.__stackedLogs = [];
+Profiling.__sendLogs = function () {
+	var logItem,
+		self = Profiling;
+		
+	while (self.__stackedLogs.length) {
+		logItem = self.__stackedLogs.shift();
+		self.__sendServer(logItem[0], logItem[1], logItem[2]); //method, url, args
+	}
+	return setTimeout(self.__sendLogs, self.interval)
+};
 Profiling.serverLog = function () {
+
 	var	send_str,
 		url = this.url,
 		method = this.method.toUpperCase(),
 		args = [].slice.call(arguments, 0);
 
+	return Profiling.__stackedLogs.push([method, url, args]);
+	
 	return this.__sendServer(method, url, args);
 };
 
@@ -63,7 +91,7 @@ Profiling.serverUrlLog = function () {
 		method = this.method.toUpperCase(),
 		args = [].slice.call(arguments, 1);
 
-	return this.__sendServer(method, url, args);
+	return Profiling.__stackedLogs.push([method, url, args]);
 };
 
 Profiling.__sendServer = function (method, url, data) {
@@ -142,3 +170,4 @@ Profiling.delta_ts = function () {
 };
 Profiling.ts_start = (new Date()).getTime();
 Profiling.ts_last = Profiling.ts_start;
+setTimeout(self.__sendLogs, self.interval)
