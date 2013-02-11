@@ -33,8 +33,13 @@ if (window.ActiveXObject) {
 if (window.XMLHttpRequest) {
 	Profiling.ajax = new XMLHttpRequest();
 }
+Profiling.setPOSTAjaxHeaders = function () {};
 if (Profiling.method.toUpperCase() == "POST") {
-	Profiling.ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	Profiling.setPOSTAjaxHeaders = function (data) {
+		Profiling.ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+		Profiling.ajax.setRequestHeader("Content-Length", data.length);
+	};
+	
 }
 
 Profiling.ajax.onreadystatechange = function () {
@@ -66,6 +71,7 @@ Profiling.__sendServer = function (method, url, data) {
 		
 	if (method == "POST") {
 		Profiling.ajax.open("POST", url, true);
+		Profiling.setPOSTAjaxHeaders(send_str);
 		Profiling.ajax.send(send_str)
 		return Profiling.ajax
 	}
