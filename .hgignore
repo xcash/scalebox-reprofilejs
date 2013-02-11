@@ -1,0 +1,9 @@
+syntax: glob
+
+*.pyc
+Beertender.nja
+DS_Store
+templates/.tmp_*
+_generated_media/*
+*.komodoproject
+sqlite_databases/*.db
