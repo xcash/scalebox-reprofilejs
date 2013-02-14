@@ -170,4 +170,4 @@ Profiling.delta_ts = function () {
 };
 Profiling.ts_start = (new Date()).getTime();
 Profiling.ts_last = Profiling.ts_start;
-setTimeout(self.__sendLogs, self.interval)
+setTimeout(Profiling.__sendLogs, Profiling.interval)
