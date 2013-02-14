@@ -1,9 +1,9 @@
 /*
-*	JS Profiling System
+*	ReprofileJS
 *
-*	use a Profile global to define options BEFORE import this file, as a JS object
+*	use a Profiling global to define options BEFORE import this file, as a JS object
 *	Es:
-*	<script type="text/javascript">Profile  = {"url" : "/logpage"}</script>
+*	<script type="text/javascript">Profiling = {"url" : "/logpage"}</script>
 *	<script type="text/javascript" src="/js-files/reprofile.js"></script>
 *
 */
