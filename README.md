@@ -37,7 +37,7 @@ Examples:
 
     Profiling.log("spells", { type: 'fire', action: 'rendering', animation_id: 123 });
 
-The call does the something:
+The call:
 - write to console if available
 - if no console.log available opens a window.alert (useful for mobile development) **only if configured to do so**
 - if configured, sends the event asynchronously to backend server (see below)
