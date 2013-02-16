@@ -155,18 +155,18 @@ if (window.console && window.console.log) {
 
 Profiling.__time_steps = function () {
 	var delta = this.delta_ts(),
-		delta_last = this.ts_last - this.__getTime();
+		delta_last = this.__getTime() - this.ts_last;
 	
 	this.ts_last = this.__getTime();
-	return [delta, delta_last]
+	return [delta, delta_last];
 };
 
 Profiling.__getTime = function () {
-	return (new Date()).getTime()
+	return (new Date()).getTime();
 };
 
 Profiling.delta_ts = function () {
-	return this.ts_start - this.__getTime()
+	return this.__getTime() - this.ts_start;
 };
 Profiling.ts_start = (new Date()).getTime();
 Profiling.ts_last = Profiling.ts_start;
