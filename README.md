@@ -23,19 +23,19 @@ Just download the sources in your content directory and import the file in the <
 	
 For better results place it on top before any other file inclusion.
 
-Now place the call to Profiling.log(message) in every step you'd like to profile.
+Now place the call to Profiling.log(obj) in every step you'd like to profile.
 
-*messages* can be a string or a list of any type of json-friendly arguments. They're saved with the log step information.
+*obj* can be a json-friendly object. It's sent with the log step information.
 
 Examples:
 
     Profiling.log("app fully started");
 
-    Profiling.log("loader", "sprite loading started");
+    Profiling.log(["loader", "sprite loading started"]);
 	...
-    Profiling.log("loader", "sprite loading complete");
+    Profiling.log(["loader", "sprite loading complete"]);
 
-    Profiling.log("spells", { type: 'fire', action: 'rendering', animation_id: 123 });
+    Profiling.log(["spells", { type: 'fire', action: 'rendering', animation_id: 123 }]);
 
 The call:
 - write to console if available
