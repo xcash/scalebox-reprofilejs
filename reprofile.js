@@ -81,8 +81,6 @@ Profiling.serverLog = function () {
 		args = [].slice.call(arguments, 0);
 
 	return Profiling.__stackedLogs.push([method, url, args]);
-	
-	return this.__sendServer(method, url, args);
 };
 
 Profiling.serverUrlLog = function () {
@@ -114,7 +112,7 @@ Profiling.__getSendString = function (args) {
 		send_str = ["ts=" + time_steps[0]];
 		send_str.push("ts_last=" + time_steps[1]);
 		
-	for (var i=0, len=args.length; len < i; i++) {
+	for (var i=0, len=args.length; i < len; i++) {
 		send_str.push("var" + i + "=" + encodeURIComponent(args[i]));
 	}
 	send_str = send_str.join("&");
