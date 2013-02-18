@@ -101,9 +101,8 @@ Profiling.__getSendString = function (data) {
 		send_str = ["ts=" + time_steps[0]];
 		send_str.push("ts_last=" + time_steps[1]);
 
-	data_type = (data instanceof Object) ? "json" : data_type;
-	data_type = (data instanceof Array) ? "list" : data_type;
-	if ((data_type == "list" || data_type == "json") && this.jsonify) {
+	data_type = ((data instanceof Object) || (data instanceof Array)) ? "json" : data_type;
+	if (data_type == "json" && this.jsonify) {
 		data_value = this.jsonify(data);
 	}
 	
