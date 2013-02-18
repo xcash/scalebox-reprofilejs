@@ -17,7 +17,7 @@ Profiling.fw = {
 	"jQuery" : !!window.jQuery
 };
 
-Profiling.jsonify = function () {};
+Profiling.jsonify = false; //cannot send JSON
 if (window.JSON && window.JSON.stringify) {Profiling.jsonify = window.JSON.stringify;}
 if (!Profiling.jsonify && Profiling.fw.MooTools) {Profiling.jsonify = JSON.encode;}
 
@@ -73,28 +73,16 @@ Profiling.__sendLogs = function () {
 	}
 	return setTimeout(self.__sendLogs, self.interval)
 };
-Profiling.serverLog = function () {
+Profiling.serverLog = function (data, url) {
+	var	method = this.method.toUpperCase();
 
-	var	send_str,
-		url = this.url,
-		method = this.method.toUpperCase(),
-		args = [].slice.call(arguments, 0);
-
-	return Profiling.__stackedLogs.push([method, url, args]);
-};
-
-Profiling.serverUrlLog = function () {
-	var	send_str,
-		url = arguments[0],
-		method = this.method.toUpperCase(),
-		args = [].slice.call(arguments, 1);
-
-	return Profiling.__stackedLogs.push([method, url, args]);
+	return Profiling.__stackedLogs.push([method, url, data]);
 };
 
 Profiling.__sendServer = function (method, url, data) {
 	var send_str = this.__getSendString(data);
-		
+	url = url || this.url;
+
 	if (method == "POST") {
 		Profiling.ajax.open("POST", url, true);
 		Profiling.setPOSTAjaxHeaders(send_str);
@@ -107,14 +95,20 @@ Profiling.__sendServer = function (method, url, data) {
 	return Profiling.ajax
 };
 
-Profiling.__getSendString = function (args) {
-	var time_steps = this.__time_steps(),
+Profiling.__getSendString = function (data) {
+	var data_type = "string", data_value = data.toString(),
+		time_steps = this.__time_steps(),
 		send_str = ["ts=" + time_steps[0]];
 		send_str.push("ts_last=" + time_steps[1]);
-		
-	for (var i=0, len=args.length; i < len; i++) {
-		send_str.push("var" + i + "=" + encodeURIComponent(args[i]));
+
+	data_type = (data instanceof Object) ? "json" : data_type;
+	data_type = (data instanceof Array) ? "list" : data_type;
+	if ((data_type == "list" || data_type == "json") && this.jsonify) {
+		data_value = this.jsonify(data);
 	}
+	
+	send_str.push("type=" + data_type);
+	send_str.push("data=" + data_value);
 	send_str = send_str.join("&");
 	return send_str
 };
