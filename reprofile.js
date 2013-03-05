@@ -155,6 +155,12 @@ if (window.console && window.console.log) {
 	};
 }
 
+
+Profiling.tsReset = function () {
+	this.ts_start = (new Date()).getTime();
+	this.ts_last = this.ts_start;	
+};
+
 Profiling.__time_steps = function () {
 	var delta = this.delta_ts(),
 		delta_last = this.__getTime() - this.ts_last;
