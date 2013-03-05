@@ -56,13 +56,11 @@ if (Profiling.method.toUpperCase() == "POST") {
 }
 
 Profiling.ajax.onreadystatechange = function () {
-	var logItem,
-		self = Profiling;
-
-	Profiling.serverCallback.apply(this, arguments);
+	var self = Profiling;
+	self .serverCallback.apply(this, arguments);
 
 	if (this.readyState == 4 && this.status == 200) {
-		Profiling.__sendLogs();
+		self.__sendLogs();
 	} else {self.startAutoSending();}
 };
 
