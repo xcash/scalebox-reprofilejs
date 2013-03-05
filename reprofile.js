@@ -53,30 +53,41 @@ if (Profiling.method.toUpperCase() == "POST") {
 		Profiling.ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
 		Profiling.ajax.setRequestHeader("Content-Length", data.length);
 	};
-	
 }
 
 Profiling.ajax.onreadystatechange = function () {
+	var logItem,
+		self = Profiling;
+
+	Profiling.serverCallback.apply(this, arguments);
+
 	if (this.readyState == 4 && this.status == 200) {
-		Profiling.serverCallback.apply(this, arguments);
-	} 
+		Profiling.__sendLogs();
+	} else {self.startAutoSending();}
 };
 
+Profiling.sendAllow = true;
 Profiling.__stackedLogs = [];
 Profiling.__sendLogs = function () {
 	var logItem,
 		self = Profiling;
-		
-	while (self.__stackedLogs.length) {
+
+	self.stopAutoSending(); //stops the __sendLogs timeout.
+
+	if (self.__stackedLogs.length) {
 		logItem = self.__stackedLogs.shift();
 		self.__sendServer(logItem[0], logItem[1], logItem[2]); //method, url, args
-	}
-	return setTimeout(self.__sendLogs, self.interval)
+
+	//if no elemnts, function will be called again
+	} else {self.startAutoSending();}
 };
+
 Profiling.serverLog = function (data, url) {
 	var	method = this.method.toUpperCase();
 
-	return Profiling.__stackedLogs.push([method, url, data]);
+	Profiling.__stackedLogs.push([method, url, data]);
+
+	return 0
 };
 
 Profiling.__sendServer = function (method, url, data) {
@@ -161,4 +172,8 @@ Profiling.delta_ts = function () {
 };
 Profiling.ts_start = (new Date()).getTime();
 Profiling.ts_last = Profiling.ts_start;
-setTimeout(Profiling.__sendLogs, Profiling.interval)
+Profiling.startAutoSending = function () {
+	Profiling.startAutoSending.timeid = setTimeout(Profiling.__sendLogs, Profiling.interval);
+};
+Profiling.stopAutoSending = function () {clearTimeout(Profiling.startAutoSending.timeid);};
+Profiling.startAutoSending();
